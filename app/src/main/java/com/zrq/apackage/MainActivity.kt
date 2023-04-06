@@ -1,6 +1,8 @@
 package com.zrq.apackage
 
 import android.Manifest
+import android.annotation.SuppressLint
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -10,6 +12,7 @@ import java.io.File
 class MainActivity : AppCompatActivity() {
 
     private lateinit var mBinding: ActivityMainBinding
+    private val list = mutableListOf<Package>()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -22,13 +25,18 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun initEvent() {
-        val list = mutableListOf<Package>()
+        val intent = Intent(Intent.ACTION_MAIN)
+        intent.addCategory(Intent.CATEGORY_LAUNCHER)
+        val resolveInfos = packageManager.queryIntentActivities(intent, 0)
+        resolveInfos.forEach {
+            val pkg = it.activityInfo.packageName
+            Log.d(TAG, "initEvent: $pkg")
+//            val file = File(packageManager.getApplicationInfo(pkg, 0).sourceDir)
+            list.add(Package(pkg))
+        }
         val packages = packageManager.getInstalledPackages(0)
         packages.forEach {
             Log.d(TAG, "onCreate: ${it.packageName}")
-            val file = File(packageManager.getApplicationInfo(it.packageName, 0).sourceDir)
-            Log.d(TAG, "onCreate: ${file.absoluteFile}")
-            list.add(com.zrq.apackage.Package(it.packageName, file))
         }
         val adapter = PkgAdapter(this, list) {}
         mBinding.recyclerView.adapter = adapter
