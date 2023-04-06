@@ -19,16 +19,19 @@ class MainActivity : AppCompatActivity() {
 
         initEvent()
 
+    }
+
+    private fun initEvent() {
+        val list = mutableListOf<Package>()
         val packages = packageManager.getInstalledPackages(0)
         packages.forEach {
             Log.d(TAG, "onCreate: ${it.packageName}")
             val file = File(packageManager.getApplicationInfo(it.packageName, 0).sourceDir)
             Log.d(TAG, "onCreate: ${file.absoluteFile}")
+            list.add(com.zrq.apackage.Package(it.packageName, file))
         }
-    }
-
-    private fun initEvent() {
-        mBinding.recyclerView.adapter
+        val adapter = PkgAdapter(this, list) {}
+        mBinding.recyclerView.adapter = adapter
     }
 
     private companion object {
