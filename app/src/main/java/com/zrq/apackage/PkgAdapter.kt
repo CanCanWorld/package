@@ -26,6 +26,8 @@ class PkgAdapter(
         val item = list[position]
         holder.binding.apply {
             tvName.text = item.name
+            ivIcon.setImageDrawable(item.drawable)
+            root.setOnClickListener { onClick(position) }
         }
     }
 
